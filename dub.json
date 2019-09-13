@@ -1,0 +1,26 @@
+{
+    "name": "machsdl",
+    "version": "0.1.0",
+    "authors": ["Sophie Kirschner"],
+    "homepage": "https://github.com/pineapplemachine/mach.d",
+    "description": "Idiomatic D wrapper around SDL and OpenGL libraries.",
+    "copyright": "Copyright © 2018, Sophie Kirschner",
+    "license": "Zlib",
+    "buildRequirements": ["allowWarnings"],
+    "sourcePaths": ["src"],
+    "importPaths": ["src"],
+    "targetType": "library",
+    "targetPath": "lib",
+    "targetName": "mach.sdl",
+    "excludedSourceFiles": [
+        "**/test.d",
+        "**/wip_*.d",
+        "**/old_*.d",
+        "**/reject_*.d",
+    ],
+    "dependencies": {
+        "mach": {"path": "../../mach.d/"},
+        "derelict-gl3": {"path": "../derelict/DerelictGL3-2.0.0-beta.8"},
+        "derelict-sdl2": {"path": "../derelict/DerelictSDL2-3.0.0-beta.8"}
+    },
+}
