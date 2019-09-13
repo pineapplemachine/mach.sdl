@@ -22,3 +22,15 @@ docs/
 
 # Code coverage
 *.lst
+
+test.d
+test.py
+wip_*.d
+wip_*.py
+old_*.d
+ref_*.d
+ref_*.c
+ref_*.py
+reject_*.d
+bin/
+*_build
