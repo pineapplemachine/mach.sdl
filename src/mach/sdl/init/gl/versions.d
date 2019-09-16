@@ -30,7 +30,7 @@ class GLVersionException: GLException{
 
 
 /// So named as to not conflict with derelict's GLVersion.
-struct GLVersions{
+struct GLVersions {
     alias Version = DerelictGLVersion;
     
     /// The currently loaded OpenGL version.
@@ -38,10 +38,11 @@ struct GLVersions{
     
     /// Determine default OpenGL version.
     /// TODO: Why these versions, and why the difference between platforms?
-    version(OSX){
+    version(OSX) {
         static enum Version MinimumVersion = Version.gl30;
         static enum Version DefaultVersion = Version.gl41;
-    }else{
+    }
+    else {
         static enum Version MinimumVersion = Version.gl30;
         static enum Version DefaultVersion = Version.gl45;
     }

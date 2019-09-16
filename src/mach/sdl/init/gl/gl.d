@@ -2,7 +2,7 @@ module mach.sdl.init.gl.gl;
 
 private:
 
-import derelict.opengl.gl;
+import derelict.opengl;
 
 import mach.sdl.error : GLException;
 import mach.sdl.init.gl.settings;
@@ -11,8 +11,6 @@ import mach.sdl.init.gl.versions;
 import mach.io.log;
 
 public:
-
-
 
 struct GL{
     static load(){
@@ -28,14 +26,15 @@ struct GL{
     alias Settings = GLSettings;
     alias Version = GLVersions;
     
-    static void initialize(){
+    static void initialize(GLSettings settings) {
         log("Initializing OpenGL");
         Version.reload();
         Version.verify();
+        settings.initialize();
         
         //glDisable(GL_DITHER);
         //glDisable(GL_LIGHTING); // Deprecated
-        //glDisable(GL_DEPTH_TEST);
+        
         //glDisable(GL_ALPHA_TEST); // Deprecated
 
         //glEnable(GL_TEXTURE_2D); // Deprecated..?
@@ -43,9 +42,6 @@ struct GL{
         //glEnable(GL_BLEND);
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // TODO: Does this work?
         
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_FRONT);
-
         //glEnable(GL_MULTISAMPLE);
         
         // http://stackoverflow.com/questions/11806823/glenableclientstate-deprecated

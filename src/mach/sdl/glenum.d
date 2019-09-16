@@ -2,13 +2,12 @@ module mach.sdl.glenum;
 
 private:
 
-//import derelict.opengl.gl3;
 import derelict.opengl;
 import mach.traits : isFloatingPoint;
 
 public:
-    
-alias glenum = uint;
+
+alias glenum = GLenum;
 
 // https://www.opengl.org/sdk/docs/man/html/glReadPixels.xhtml
 // https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml
@@ -80,15 +79,23 @@ enum bool validvertextype(Type) = (
     is(Type == float) || is(Type == double)
 );
 
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCullFace.xhtml
+enum CullFaceMode : glenum {
+    Default = Back,
+    Front = GL_FRONT,
+    Back = GL_BACK,
+    FrontAndBack = GL_FRONT_AND_BACK,
+}
+
 // https://www.opengl.org/sdk/docs/man/html/glReadBuffer.xhtml
 enum ColorBufferMode : glenum {
-    FrontLeft = GL_FRONT_LEFT, 
-    FrontRight = GL_FRONT_RIGHT, 
-    BackLeft = GL_BACK_LEFT, 
-    BackRight = GL_BACK_RIGHT, 
-    Front = GL_FRONT, 
-    Back = GL_BACK, 
-    Left = GL_LEFT, 
+    FrontLeft = GL_FRONT_LEFT,
+    FrontRight = GL_FRONT_RIGHT,
+    BackLeft = GL_BACK_LEFT,
+    BackRight = GL_BACK_RIGHT,
+    Front = GL_FRONT,
+    Back = GL_BACK,
+    Left = GL_LEFT,
     Right = GL_RIGHT,
     ColorAttachment00 = GL_COLOR_ATTACHMENT0,
     ColorAttachment01 = GL_COLOR_ATTACHMENT1,
@@ -106,6 +113,13 @@ enum ColorBufferMode : glenum {
     ColorAttachment13 = GL_COLOR_ATTACHMENT13,
     ColorAttachment14 = GL_COLOR_ATTACHMENT14,
     ColorAttachment15 = GL_COLOR_ATTACHMENT15,
+}
+
+// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glFrontFace.xhtml
+enum FrontFaceMode : glenum {
+    Default = Counterclockwise,
+    Clockwise = GL_CW,
+    Counterclockwise = GL_CCW,
 }
 
 static immutable glenum[16] ColorAttachment = [
@@ -553,6 +567,48 @@ enum GLPrimitive : glenum {
     //Quads = GL_QUADS,
     //QuadStrip = GL_QUAD_STRIP,
     //Polygon = GL_POLYGON,
+}
+
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDepthRange.xhtml
+enum DepthFunction : GLenum {
+    Default = Less,
+    /// Never passes.
+    Never = GL_NEVER,
+    /// Passes if the incoming depth value is less than the stored depth value.
+    Less = GL_LESS,
+    /// Passes if the incoming depth value is equal to the stored depth value.
+    Equal = GL_EQUAL,
+    /// Passes if the incoming depth value is less than or equal to the stored depth value.
+    LessOrEqual = GL_LEQUAL,
+    /// Passes if the incoming depth value is greater than the stored depth value.
+    Greater = GL_GREATER,
+    /// Passes if the incoming depth value is not equal to the stored depth value.
+    NotEqual = GL_NOTEQUAL,
+    /// Passes if the incoming depth value is greater than or equal to the stored depth value.
+    GreaterOrEqual = GL_GEQUAL,
+    /// Always passes.
+    Always = GL_ALWAYS,
+}
+
+// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glStencilFuncSeparate.xhtml
+// https://www.khronos.org/opengl/wiki/Stencil_Test
+enum StencilFunction : GLenum {
+    Default = Always,
+    Never = GL_NEVER,
+    Less = GL_LESS,
+    Equal = GL_EQUAL,
+    LessOrEqual = GL_LEQUAL,
+    Greater = GL_GREATER,
+    NotEqual = GL_NOTEQUAL,
+    GreaterOrEqual = GL_GEQUAL,
+    Always = GL_ALWAYS,
+}
+
+// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glStencilFuncSeparate.xhtml
+enum StencilFace : glenum {
+    Front = GL_FRONT,
+    Back = GL_BACK,
+    FrontAndBack = GL_FRONT_AND_BACK,
 }
 
 // https://www.opengl.org/sdk/docs/man/html/glBlendFunc.xhtml

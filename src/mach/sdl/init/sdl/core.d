@@ -2,7 +2,10 @@ module mach.sdl.init.sdl.core;
 
 private:
 
+// http://derelictorg.github.io/packages/sdl2/
 import derelict.sdl2.sdl;
+import derelict.util.loader : SharedLibVersion;
+
 import mach.sdl.error : SDLException;
 import mach.sdl.flags;
 
@@ -11,7 +14,7 @@ public:
 
 
 struct Core{
-    static load(){DerelictSDL2.load();}
+    static load(){DerelictSDL2.load(SharedLibVersion(2, 0, 2));}
     static unload(){DerelictSDL2.unload();}
     
     /// https://wiki.libsdl.org/SDL_Init
@@ -38,15 +41,18 @@ struct Core{
             throw new SDLException("Failed to initialize system.");
         }
     }
+    
     /// Get which systems have so far been successfully initialized.
     /// https://wiki.libsdl.org/SDL_WasInit
     static Systems initialized(){
         return Systems(SDL_WasInit(0));
     }
+    
     /// https://wiki.libsdl.org/SDL_Quit
     static void quit(){
         SDL_Quit();
     }
+    
     /// https://wiki.libsdl.org/SDL_QuitSubSystem
     static void quit(Systems systems){
         SDL_QuitSubSystem(systems.flags);

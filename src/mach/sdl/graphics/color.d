@@ -16,11 +16,11 @@ public:
 
 
 
-enum isColor(T) = isTemplateOf!(T, Color);
+//enum isColor(T) = isTemplateOf!(T, Color);
 
 
 
-struct Color{
+struct Color {
     alias Value = float;
     alias Values = Aliases!(Value, Value, Value, Value);
     
@@ -141,16 +141,24 @@ struct Color{
         );
     }
     
-    auto equals(in Color color) const{
-        return this.equals(color, 0x1p-9);
+    bool equals(in Color color) const{
+        foreach(i, _; Values){
+            if(this[i] != color[i]) return false;
+        }
+        return true;
     }
-    auto equals(E)(in Color color, in E epsilon) const if(isNumeric!E){
+    
+    bool equals(E)(in Color color, in E epsilon) const if(isNumeric!E) {
         assert(epsilon >= 0, "Epsilon must be non-negative.");
         foreach(i, _; Values){
             immutable delta = this[i] - color[i];
             if(delta < -epsilon || delta > epsilon) return false;
         }
         return true;
+    }
+    
+    bool opEquals(in Color color) const {
+        return this.equals(color);
     }
     
     /// Get a copy of this color with the same RGB values but a perfectly

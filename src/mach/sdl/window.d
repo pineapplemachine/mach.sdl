@@ -3,11 +3,12 @@ module mach.sdl.window;
 private:
 
 import derelict.sdl2.sdl;
-import derelict.opengl.gl;
+import derelict.opengl;
 
 import mach.traits : isNumeric;
 import mach.range : filter, asarray;
 import mach.text.cstring : tocstring, fromcstring;
+
 import mach.sdl.error : SDLException, GLException;
 import mach.sdl.init : GL, GLSettings;
 import mach.sdl.glenum : PixelsFormat, PixelsType, ColorBufferMode;
@@ -146,7 +147,8 @@ class Window{
     ){
         // Actually create the window
         log("Creating a window.");
-        this.glsettings(settings);
+        log("Creating window using GLSettings: ", settings);
+        settings.apply();
         this.window = SDL_CreateWindow(
             title.tocstring,
             view.x, view.y, view.width, view.height,
@@ -161,7 +163,7 @@ class Window{
         }
         //GL.reload();
         //GL.Version.verify();
-        GL.initialize();
+        GL.initialize(settings);
         //this.projection(Box!int(view.width, view.height));
         this.clearcolor(0, 0, 0, 1);
         this.vsync(vsync);
@@ -242,7 +244,7 @@ class Window{
     }
     
     void clear(){
-        //glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
     }
     void clear(T)(in T color){
         this.clearcolor(color);
@@ -263,7 +265,7 @@ class Window{
         this.clearcolor(rgba[0], rgba[1], rgba[2], rgba[3]);
     }
     void clearcolor(N)(in N r, in N g, in N b, in N a = 1) if(isNumeric!N){
-        //glClearColor(cast(float) r, cast(float) g, cast(float) b, cast(float) a);
+        glClearColor(cast(float) r, cast(float) g, cast(float) b, cast(float) a);
     }
     
     @property bool current(){
@@ -274,12 +276,6 @@ class Window{
     void swap(){
         this.use();
         SDL_GL_SwapWindow(this.window);
-    }
-    
-    /// Set OpenGL context settings.
-    @property void glsettings(GLSettings settings){
-        this.use();
-        settings.apply();
     }
     
     void use(){
@@ -325,11 +321,11 @@ class Window{
     ){
         Vector2!int size = this.size();
         Surface capture = Surface(size.x, size.y, depth, Mask.Zero);
-        //glReadBuffer(ColorBufferMode.Front);
-        //glReadPixels(
-        //    0, 0, size.x, size.y, format,
-        //    PixelsType.Ubyte, capture.surface.pixels
-        //);
+        glReadBuffer(ColorBufferMode.Front);
+        glReadPixels(
+            0, 0, size.x, size.y, format,
+            PixelsType.Ubyte, capture.surface.pixels
+        );
         GLException.enforce();
         //capture.flip(); // TODO: Why does Dgame do a horizontal flip here?
         return capture;
@@ -482,7 +478,7 @@ class Window{
         this.setfullscreen(style);
     }
     @property void fullscreen(in bool fullscreen){
-        //this.setfullscreen(fullscreen ? StyleFlag.Fullscreen : 0);
+        this.setfullscreen(fullscreen ? StyleFlag.Fullscreen : StyleFlag.Default);
     }
     @property bool fullscreen(){
         return (this.style & FullscreenStyles) != 0;

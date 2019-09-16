@@ -12,6 +12,8 @@ import mach.sdl.framelimiter : FrameLimiter;
 import mach.sdl.input.event : Event, EventQueue;
 import mach.sdl.input.helper : KeyHelper, MouseHelper;
 
+import mach.io : log;
+
 public:
 
 
@@ -82,21 +84,23 @@ abstract class Application{
         return this.framelimiter.actualfps;
     }
     /// Clear the application window.
-    void clear() in{assert(this.window);} body{
+    void clear() {
+        assert(this.window);
         this.window.clear();
     }
     /// ditto
-    void clear(in Color color) in{assert(this.window);}body{
+    void clear(in Color color) {
+        assert(this.window);
         this.window.clear(color);
     }
     /// ditto
-    void clear(T)(in T r, in T g, in T b, in T a = 1) if(isNumeric!T) in{
-        assert(this.window !is null);
-    }body{
+    void clear(T)(in T r, in T g, in T b, in T a = 1) if(isNumeric!T) {
+        assert(this.window);
         this.window.clear(r, g, b, a);
     }
     /// Swap the application window, displaying graphical changes.
-    void swap() in{assert(this.window);} body{
+    void swap() {
+        assert(this.window);
         this.window.swap();
     }
     
@@ -130,7 +134,7 @@ abstract class Application{
     /// Call this method when an unhandled error occurs in the application's
     /// main loop.
     /// By default, quits the application.
-    void onerror(Throwable error){quit(QuitReason.UnhandledError);}
+    void onerror(Throwable error){this.quit(QuitReason.UnhandledError);}
     /// Call this method when a quit event has been found in the event queue.
     /// By default, quits the application.
     void onquit(Event event){this.quit(QuitReason.QuitEvent);}
