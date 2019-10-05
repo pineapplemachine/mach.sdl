@@ -1,8 +1,9 @@
 {
+	"fileVersion": 1,
 	"versions": {
-		"derelict-gl3": "1.0.24",
-		"derelict-sdl2": "2.1.4",
-		"derelict-util": "2.0.6"
-	},
-	"fileVersion": 1
+		"derelict-gl3": "2.0.0-beta.8",
+		"derelict-sdl2": "3.0.0-beta.8",
+		"derelict-util": "3.0.0-beta.2",
+		"mach": {"path":"../../mach.d/"}
+	}
 }
