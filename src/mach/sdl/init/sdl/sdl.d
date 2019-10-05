@@ -152,7 +152,7 @@ struct SDLSupport {
     }
 }
 
-struct SDL{
+struct SDL {
     alias Core = .Core;
     alias Image = .Image;
     alias Mixer = .Mixer;

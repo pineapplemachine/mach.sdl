@@ -207,7 +207,7 @@ struct Font{
             this.font, text.tocstring, cast(SDL_Color) foreground
         );
         if(surface is null) throw new SDLException("Failed to render text.");
-        return Surface(surface);
+        return SDLSurface(surface);
     }
     /// Returns a surface with the given text drawn onto it.
     /// The background will be of the given color.
@@ -221,7 +221,7 @@ struct Font{
             cast(SDL_Color) foreground, cast(SDL_Color) background
         );
         if(surface is null) throw new SDLException("Failed to render text.");
-        return Surface(surface);
+        return SDLSurface(surface);
     }
     /// Returns a surface with the given text expensively drawn onto it.
     /// The background of the surface will be transparent.
@@ -234,7 +234,7 @@ struct Font{
             this.font, text.tocstring, cast(SDL_Color) foreground
         );
         if(surface is null) throw new SDLException("Failed to render text.");
-        return Surface(surface);
+        return SDLSurface(surface);
     }
     
     /// Returns a surface with the given text drawn onto it.
@@ -248,7 +248,7 @@ struct Font{
     
     /// Returns a texture with the given text drawn onto it.
     auto texture(Color foreground, string text, RenderMode mode = RenderMode.Solid){
-        return Texture(this.surface(foreground, text, mode));
+        return GLTexture(this.surface(foreground, text, mode));
     }
 }
 

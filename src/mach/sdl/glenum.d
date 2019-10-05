@@ -7,11 +7,71 @@ import mach.traits : isFloatingPoint;
 
 public:
 
-alias glenum = GLenum;
+enum GLTypeOf(T: byte) = GL_BYTE;
+enum GLTypeOf(T: ubyte) = GL_UNSIGNED_BYTE;
+enum GLTypeOf(T: short) = GL_SHORT;
+enum GLTypeOf(T: ushort) = GL_UNSIGNED_SHORT;
+enum GLTypeOf(T: int) = GL_INT;
+enum GLTypeOf(T: uint) = GL_UNSIGNED_INT;
+enum GLTypeOf(T: float) = GL_FLOAT;
+enum GLTypeOf(T: double) = GL_DOUBLE;
+
+private GLint GLComponents(in GLenum type) {
+    switch(type) {
+        case GL_FLOAT:
+        case GL_DOUBLE:
+        case GL_INT:
+        case GL_UNSIGNED_INT:
+            return 1;
+        case GL_FLOAT_VEC2:
+        case GL_DOUBLE_VEC2:
+        case GL_INT_VEC2:
+        case GL_UNSIGNED_INT_VEC2:
+            return 2;
+        case GL_FLOAT_VEC3:
+        case GL_DOUBLE_VEC3:
+        case GL_INT_VEC3:
+        case GL_UNSIGNED_INT_VEC3:
+            return 3;
+        case GL_FLOAT_VEC4:
+        case GL_DOUBLE_VEC4:
+        case GL_INT_VEC4:
+        case GL_UNSIGNED_INT_VEC4:
+        case GL_FLOAT_MAT2:
+        case GL_DOUBLE_MAT2:
+            return 4;
+        case GL_FLOAT_MAT3:
+        case GL_DOUBLE_MAT3:
+            return 9;
+        case GL_FLOAT_MAT4:
+        case GL_DOUBLE_MAT4:
+            return 16;
+        case GL_FLOAT_MAT2x3:
+        case GL_DOUBLE_MAT2x3:
+            return 6;
+        case GL_FLOAT_MAT2x4:
+        case GL_DOUBLE_MAT2x4:
+            return 8;
+        case GL_FLOAT_MAT3x2:
+        case GL_DOUBLE_MAT3x2:
+            return 6;
+        case GL_FLOAT_MAT3x4:
+        case GL_DOUBLE_MAT3x4:
+            return 12;
+        case GL_FLOAT_MAT4x2:
+        case GL_DOUBLE_MAT4x2:
+            return 8;
+        case GL_FLOAT_MAT4x3:
+        case GL_DOUBLE_MAT4x3:
+            return 12;
+        default:
+            return 0;
+    }
+}
 
 // https://www.opengl.org/sdk/docs/man/html/glReadPixels.xhtml
 // https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml
-enum PixelsFormat : glenum {
+enum GLPixelsFormat : GLenum {
     Red = GL_RED,
     RG = GL_RG,
     Green = GL_GREEN,
@@ -33,10 +93,10 @@ enum PixelsFormat : glenum {
 
 // https://www.opengl.org/sdk/docs/man/html/glReadPixels.xhtml
 // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glReadPixels.xml
-enum PixelsType : glenum {
+enum GLPixelsType : GLenum {
     Ubyte = GL_UNSIGNED_BYTE,
     Byte = GL_BYTE,
-    Ushort= GL_UNSIGNED_SHORT,
+    Ushort = GL_UNSIGNED_SHORT,
     Short = GL_SHORT,
     Uint = GL_UNSIGNED_INT,
     Int = GL_INT,
@@ -61,17 +121,17 @@ enum PixelsType : glenum {
 }
 
 // https://www.opengl.org/sdk/docs/man2/xhtml/glVertexPointer.xml
-enum VertexType : glenum {
+enum GLVertexType : GLenum {
     Short = GL_SHORT,
     Int = GL_INT,
     Float = GL_FLOAT,
     Double = GL_DOUBLE
 }
-VertexType getvertextype(Type)(){
-    static if(is(Type == short)) return VertexType.Short;
-    static if(is(Type == int)) return VertexType.Int;
-    static if(is(Type == float)) return VertexType.Float;
-    static if(is(Type == double)) return VertexType.Double;
+GLVertexType getvertextype(Type)(){
+    static if(is(Type == short)) return GLVertexType.Short;
+    static if(is(Type == int)) return GLVertexType.Int;
+    static if(is(Type == float)) return GLVertexType.Float;
+    static if(is(Type == double)) return GLVertexType.Double;
     else assert(false, "Unrecognized vertex type.");
 }
 enum bool validvertextype(Type) = (
@@ -80,7 +140,7 @@ enum bool validvertextype(Type) = (
 );
 
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCullFace.xhtml
-enum CullFaceMode : glenum {
+enum GLCullFaceMode : GLenum {
     Default = Back,
     Front = GL_FRONT,
     Back = GL_BACK,
@@ -88,7 +148,7 @@ enum CullFaceMode : glenum {
 }
 
 // https://www.opengl.org/sdk/docs/man/html/glReadBuffer.xhtml
-enum ColorBufferMode : glenum {
+enum GLColorBufferMode : GLenum {
     FrontLeft = GL_FRONT_LEFT,
     FrontRight = GL_FRONT_RIGHT,
     BackLeft = GL_BACK_LEFT,
@@ -116,33 +176,33 @@ enum ColorBufferMode : glenum {
 }
 
 // https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glFrontFace.xhtml
-enum FrontFaceMode : glenum {
+enum GLFrontFaceMode : GLenum {
     Default = Counterclockwise,
     Clockwise = GL_CW,
     Counterclockwise = GL_CCW,
 }
 
-static immutable glenum[16] ColorAttachment = [
-    ColorBufferMode.ColorAttachment00,
-    ColorBufferMode.ColorAttachment01,
-    ColorBufferMode.ColorAttachment02,
-    ColorBufferMode.ColorAttachment03,
-    ColorBufferMode.ColorAttachment04,
-    ColorBufferMode.ColorAttachment05,
-    ColorBufferMode.ColorAttachment06,
-    ColorBufferMode.ColorAttachment07,
-    ColorBufferMode.ColorAttachment08,
-    ColorBufferMode.ColorAttachment09,
-    ColorBufferMode.ColorAttachment10,
-    ColorBufferMode.ColorAttachment11,
-    ColorBufferMode.ColorAttachment12,
-    ColorBufferMode.ColorAttachment13,
-    ColorBufferMode.ColorAttachment14,
-    ColorBufferMode.ColorAttachment15,
+static immutable GLenum[16] GLColorAttachment = [
+    GLColorBufferMode.ColorAttachment00,
+    GLColorBufferMode.ColorAttachment01,
+    GLColorBufferMode.ColorAttachment02,
+    GLColorBufferMode.ColorAttachment03,
+    GLColorBufferMode.ColorAttachment04,
+    GLColorBufferMode.ColorAttachment05,
+    GLColorBufferMode.ColorAttachment06,
+    GLColorBufferMode.ColorAttachment07,
+    GLColorBufferMode.ColorAttachment08,
+    GLColorBufferMode.ColorAttachment09,
+    GLColorBufferMode.ColorAttachment10,
+    GLColorBufferMode.ColorAttachment11,
+    GLColorBufferMode.ColorAttachment12,
+    GLColorBufferMode.ColorAttachment13,
+    GLColorBufferMode.ColorAttachment14,
+    GLColorBufferMode.ColorAttachment15,
 ];
 
 // https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml
-enum TextureTarget : glenum {
+enum GLTextureTarget : GLenum {
     Texture2D = GL_TEXTURE_2D,
     ProxyTexture2D = GL_PROXY_TEXTURE_2D,
     Texture1D = GL_TEXTURE_1D_ARRAY,
@@ -158,7 +218,7 @@ enum TextureTarget : glenum {
 }
 
 // https://www.opengl.org/sdk/docs/man/html/glTexImage2D.xhtml
-enum InternalFormat : glenum {
+enum GLInternalFormat : GLenum {
     DepthComponent = GL_DEPTH_COMPONENT,
     DepthStencil = GL_DEPTH_STENCIL,
     Red = GL_RED,
@@ -239,11 +299,12 @@ enum InternalFormat : glenum {
 }
 
 // https://www.opengl.org/sdk/docs/man/html/glTexParameter.xhtml
-enum TextureMagFilter : glenum {
+enum GLTextureMagFilter : GLenum {
     Nearest = GL_NEAREST,
     Linear = GL_LINEAR,
 }
-enum TextureMinFilter : glenum {
+
+enum GLTextureMinFilter : GLenum {
     Nearest = GL_NEAREST,
     Linear = GL_LINEAR,
     NearestMipmapNearest = GL_NEAREST_MIPMAP_NEAREST,
@@ -251,12 +312,13 @@ enum TextureMinFilter : glenum {
     NearestMipmapLinear = GL_NEAREST_MIPMAP_LINEAR,
     LinearMipmapLinear = GL_LINEAR_MIPMAP_LINEAR,
 }
-alias TextureFilter = TextureMagFilter;
+
+alias GLTextureFilter = GLTextureMagFilter;
 
 /// Enumeration of meaningful texture wrapping modes.
 /// https://open.gl/textures
 /// https://www.khronos.org/opengl/wiki/GLAPI/glSamplerParameter
-enum TextureWrap : glenum {
+enum GLTextureWrap : GLenum {
     ClampEdge = GL_CLAMP_TO_EDGE,
     ClampBorder = GL_CLAMP_TO_BORDER,
     Repeat = GL_REPEAT,
@@ -265,7 +327,7 @@ enum TextureWrap : glenum {
 }
 
 // https://www.opengl.org/sdk/docs/man/html/glTexParameter.xhtml
-enum TextureParam : glenum {
+enum GLTextureParameter : GLenum {
     DepthStencilMode = GL_DEPTH_STENCIL_TEXTURE_MODE,
     BaseLevel = GL_TEXTURE_BASE_LEVEL,
     CompareFunc = GL_TEXTURE_COMPARE_FUNC,
@@ -287,7 +349,7 @@ enum TextureParam : glenum {
     SwizzleRGBA = GL_TEXTURE_SWIZZLE_RGBA,
 }
 
-enum Param : glenum {
+enum GLParameter : GLenum {
     ActiveTexture = GL_ACTIVE_TEXTURE,
     AliasedLineWidthRange = GL_ALIASED_LINE_WIDTH_RANGE,
     ArrayBufferBinding = GL_ARRAY_BUFFER_BINDING,
@@ -327,7 +389,7 @@ enum Param : glenum {
     DepthWriteMask = GL_DEPTH_WRITEMASK,
     Dither = GL_DITHER,
     DoubleBuffer = GL_DOUBLEBUFFER,
-    DrawBuffer = GL_DRAW_BUFFER,
+    GLDrawBuffer = GL_DRAW_BUFFER,
     DrawBuffer00 = GL_DRAW_BUFFER0,
     DrawBuffer01 = GL_DRAW_BUFFER1,
     DrawBuffer02 = GL_DRAW_BUFFER2,
@@ -531,27 +593,27 @@ enum Param : glenum {
     MaxElementIndex = GL_MAX_ELEMENT_INDEX,
 }
 
-static immutable glenum[16] DrawBuffer = [
-    Param.DrawBuffer00,
-    Param.DrawBuffer01,
-    Param.DrawBuffer02,
-    Param.DrawBuffer03,
-    Param.DrawBuffer04,
-    Param.DrawBuffer05,
-    Param.DrawBuffer06,
-    Param.DrawBuffer07,
-    Param.DrawBuffer08,
-    Param.DrawBuffer09,
-    Param.DrawBuffer10,
-    Param.DrawBuffer11,
-    Param.DrawBuffer12,
-    Param.DrawBuffer13,
-    Param.DrawBuffer14,
-    Param.DrawBuffer15,
+static immutable GLenum[16] GLDrawBuffer = [
+    GL_DRAW_BUFFER0,
+    GL_DRAW_BUFFER1,
+    GL_DRAW_BUFFER2,
+    GL_DRAW_BUFFER3,
+    GL_DRAW_BUFFER4,
+    GL_DRAW_BUFFER5,
+    GL_DRAW_BUFFER6,
+    GL_DRAW_BUFFER7,
+    GL_DRAW_BUFFER8,
+    GL_DRAW_BUFFER9,
+    GL_DRAW_BUFFER10,
+    GL_DRAW_BUFFER11,
+    GL_DRAW_BUFFER12,
+    GL_DRAW_BUFFER13,
+    GL_DRAW_BUFFER14,
+    GL_DRAW_BUFFER15,
 ];
 
 // https://www.opengl.org/sdk/docs/man/html/glDrawArrays.xhtml
-enum GLPrimitive : glenum {
+enum GLPrimitive : GLenum {
     Points = GL_POINTS,
     LineStrip = GL_LINE_STRIP,
     LineLoop = GL_LINE_LOOP,
@@ -570,7 +632,7 @@ enum GLPrimitive : glenum {
 }
 
 /// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glDepthRange.xhtml
-enum DepthFunction : GLenum {
+enum GLDepthFunction : GLenum {
     Default = Less,
     /// Never passes.
     Never = GL_NEVER,
@@ -592,7 +654,7 @@ enum DepthFunction : GLenum {
 
 // https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glStencilFuncSeparate.xhtml
 // https://www.khronos.org/opengl/wiki/Stencil_Test
-enum StencilFunction : GLenum {
+enum GLStencilFunction : GLenum {
     Default = Always,
     Never = GL_NEVER,
     Less = GL_LESS,
@@ -605,14 +667,14 @@ enum StencilFunction : GLenum {
 }
 
 // https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glStencilFuncSeparate.xhtml
-enum StencilFace : glenum {
+enum GLStencilFace : GLenum {
     Front = GL_FRONT,
     Back = GL_BACK,
     FrontAndBack = GL_FRONT_AND_BACK,
 }
 
 // https://www.opengl.org/sdk/docs/man/html/glBlendFunc.xhtml
-enum BlendFactor : glenum {
+enum GLBlendFactor : GLenum {
     Zero = GL_ZERO,
     One = GL_ONE,
     SrcColor = GL_SRC_COLOR,
@@ -630,7 +692,7 @@ enum BlendFactor : glenum {
 }
 
 // http://docs.gl/gl3/glMatrixMode
-enum MatrixMode : glenum {
+enum MatrixMode : GLenum {
     //ModelView = GL_MODELVIEW,
     //Projection = GL_PROJECTION,
     Texture = GL_TEXTURE,
@@ -638,7 +700,7 @@ enum MatrixMode : glenum {
 }
 
 // https://www.opengl.org/sdk/docs/man2/xhtml/glEnable.xml
-enum Capability : glenum {
+enum Capability : GLenum {
     //AlphaTest = GL_ALPHA_TEST, // Deprecated
     //AutoNormal = GL_AUTO_NORMAL, // Deprecated
     Blend = GL_BLEND,
@@ -715,15 +777,276 @@ enum Capability : glenum {
     //VertexProgramTwoSide = GL_VERTEX_PROGRAM_TWO_SIDE, // Deprecated
 }
 
-/+ Deprecated
-static immutable glenum[8] Light = [
-    Capability.Light0,
-    Capability.Light1,
-    Capability.Light2,
-    Capability.Light3,
-    Capability.Light4,
-    Capability.Light5,
-    Capability.Light6,
-    Capability.Light7,
-];
-+/
+enum GLBindBufferTarget : GLenum {
+    ArrayBuffer = GL_ARRAY_BUFFER, /// Vertex attributes
+    AtomicCounterBuffer = GL_ATOMIC_COUNTER_BUFFER, /// Atomic counter storage
+    CopyReadBuffer = GL_COPY_READ_BUFFER, /// Buffer copy source
+    CopyWriteBuffer = GL_COPY_WRITE_BUFFER, /// Buffer copy destination
+    DispatchIndirectBuffer = GL_DISPATCH_INDIRECT_BUFFER, /// Indirect compute dispatch commands
+    DrawIndirectBuffer = GL_DRAW_INDIRECT_BUFFER, /// Indirect command arguments
+    ElementArrayBuffer = GL_ELEMENT_ARRAY_BUFFER, /// Vertex array indices
+    PixelPackBuffer = GL_PIXEL_PACK_BUFFER, /// Pixel read target
+    PixelUnpackBuffer = GL_PIXEL_UNPACK_BUFFER, /// Texture data source
+    QueryBuffer = GL_QUERY_BUFFER, /// Query result buffer
+    ShaderStorageBuffer = GL_SHADER_STORAGE_BUFFER, /// Read-write storage for shaders
+    TextureBuffer = GL_TEXTURE_BUFFER, /// Texture data buffer
+    TransformFeedbackBuffer = GL_TRANSFORM_FEEDBACK_BUFFER, /// Transform feedback buffer
+    UniformBuffer = GL_UNIFORM_BUFFER, /// Uniform block storage
+}
+
+enum GLBufferUsage : GLenum {
+    StreamDraw = GL_STREAM_DRAW,
+    StreamRead = GL_STREAM_READ,
+    StreamCopy = GL_STREAM_COPY,
+    StaticDraw = GL_STATIC_DRAW,
+    StaticRead = GL_STATIC_READ,
+    StaticCopy = GL_STATIC_COPY,
+    DynamicDraw = GL_DYNAMIC_DRAW,
+    DynamicRead = GL_DYNAMIC_READ,
+    DynamicCopy = GL_DYNAMIC_COPY,
+}
+
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetProgram.xhtml
+enum GLProgramParameter : GLenum {
+    DeleteStatus = GL_DELETE_STATUS,
+    LinkStatus = GL_LINK_STATUS,
+    ValidateStatus = GL_VALIDATE_STATUS,
+    InfoLogLength = GL_INFO_LOG_LENGTH,
+    AttachedShaders = GL_ATTACHED_SHADERS,
+    AtomicCounterBuffers = GL_ACTIVE_ATOMIC_COUNTER_BUFFERS,
+    ActiveAttributes = GL_ACTIVE_ATTRIBUTES,
+    ActiveAttributeMaxLength = GL_ACTIVE_ATTRIBUTE_MAX_LENGTH,
+    ActiveUniforms = GL_ACTIVE_UNIFORMS,
+    ActiveUniformMaxLength = GL_ACTIVE_UNIFORM_MAX_LENGTH,
+    ActiveUniformBlocks = GL_ACTIVE_UNIFORM_BLOCKS, // OpenGL 3.1 and greater
+    ActiveUniformBlockMaxLength = GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, // OpenGL 3.1 and greater
+    WorkGroupSize = GL_COMPUTE_WORK_GROUP_SIZE, /// OpenGL 4.3 and greater
+    ProgramBinaryLength = GL_PROGRAM_BINARY_LENGTH,
+    TransformFeedbackBufferMode = GL_TRANSFORM_FEEDBACK_BUFFER_MODE,
+    TransformFeedbackVaryings = GL_TRANSFORM_FEEDBACK_VARYINGS,
+    TransformFeedbackVaryingMaxLength = GL_TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH,
+    GeometryVertexesOut = GL_GEOMETRY_VERTICES_OUT,
+    GeometryInputType = GL_GEOMETRY_INPUT_TYPE,
+    GeometryOutputType = GL_GEOMETRY_OUTPUT_TYPE,
+}
+
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetActiveAttrib.xhtml
+enum GLProgramActiveAttributeType : GLenum {
+    Float = GL_FLOAT,
+    FloatVec2 = GL_FLOAT_VEC2,
+    FloatVec3 = GL_FLOAT_VEC3,
+    FloatVec4 = GL_FLOAT_VEC4,
+    FloatMat2 = GL_FLOAT_MAT2,
+    FloatMat3 = GL_FLOAT_MAT3,
+    FloatMat4 = GL_FLOAT_MAT4,
+    FloatMat2x3 = GL_FLOAT_MAT2x3,
+    FloatMat2x4 = GL_FLOAT_MAT2x4,
+    FloatMat3x2 = GL_FLOAT_MAT3x2,
+    FloatMat3x4 = GL_FLOAT_MAT3x4,
+    FloatMat4x2 = GL_FLOAT_MAT4x2,
+    FloatMat4x3 = GL_FLOAT_MAT4x3,
+    Int = GL_INT,
+    IntVec2 = GL_INT_VEC2,
+    IntVec3 = GL_INT_VEC3,
+    IntVec4 = GL_INT_VEC4,
+    UnsignedInt = GL_UNSIGNED_INT,
+    UnsignedIntVec2 = GL_UNSIGNED_INT_VEC2,
+    UnsignedIntVec3 = GL_UNSIGNED_INT_VEC3,
+    UnsignedIntVec4 = GL_UNSIGNED_INT_VEC4,
+    Double = GL_DOUBLE,
+    DoubleVec2 = GL_DOUBLE_VEC2,
+    DoubleVec3 = GL_DOUBLE_VEC3,
+    DoubleVec4 = GL_DOUBLE_VEC4,
+    DoubleMat2 = GL_DOUBLE_MAT2,
+    DoubleMat3 = GL_DOUBLE_MAT3,
+    DoubleMat4 = GL_DOUBLE_MAT4,
+    DoubleMat2x3 = GL_DOUBLE_MAT2x3,
+    DoubleMat2x4 = GL_DOUBLE_MAT2x4,
+    DoubleMat3x2 = GL_DOUBLE_MAT3x2,
+    DoubleMat3x4 = GL_DOUBLE_MAT3x4,
+    DoubleMat4x2 = GL_DOUBLE_MAT4x2,
+    DoubleMat4x3 = GL_DOUBLE_MAT4x3,
+}
+
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetActiveUniform.xhtml
+enum GLProgramActiveUniformType : GLenum {
+    Float = GL_FLOAT, /// float
+    FloatVec2 = GL_FLOAT_VEC2, /// vec2
+    FloatVec3 = GL_FLOAT_VEC3, /// vec3
+    FloatVec4 = GL_FLOAT_VEC4, /// vec4
+    Double = GL_DOUBLE, /// double
+    DoubleVec2 = GL_DOUBLE_VEC2, /// dvec2
+    DoubleVec3 = GL_DOUBLE_VEC3, /// dvec3
+    DoubleVec4 = GL_DOUBLE_VEC4, /// dvec4
+    Int = GL_INT, /// int
+    IntVec2 = GL_INT_VEC2, /// ivec2
+    IntVec3 = GL_INT_VEC3, /// ivec3
+    IntVec4 = GL_INT_VEC4, /// ivec4
+    UnsignedInt = GL_UNSIGNED_INT, /// unsigned int
+    UnsignedIntVec2 = GL_UNSIGNED_INT_VEC2, /// uvec2
+    UnsignedIntVec3 = GL_UNSIGNED_INT_VEC3, /// uvec3
+    UnsignedIntVec4 = GL_UNSIGNED_INT_VEC4, /// uvec4
+    Bool = GL_BOOL, /// bool
+    BoolVec2 = GL_BOOL_VEC2, /// bvec2
+    BoolVec3 = GL_BOOL_VEC3, /// bvec3
+    BoolVec4 = GL_BOOL_VEC4, /// bvec4
+    FloatMat2 = GL_FLOAT_MAT2, /// mat2
+    FloatMat3 = GL_FLOAT_MAT3, /// mat3
+    FloatMat4 = GL_FLOAT_MAT4, /// mat4
+    FloatMat2x3 = GL_FLOAT_MAT2x3, /// mat2x3
+    FloatMat2x4 = GL_FLOAT_MAT2x4, /// mat2x4
+    FloatMat3x2 = GL_FLOAT_MAT3x2, /// mat3x2
+    FloatMat3x4 = GL_FLOAT_MAT3x4, /// mat3x4
+    FloatMat4x2 = GL_FLOAT_MAT4x2, /// mat4x2
+    FloatMat4x3 = GL_FLOAT_MAT4x3, /// mat4x3
+    DoubleMat2 = GL_DOUBLE_MAT2, /// dmat2
+    DoubleMat3 = GL_DOUBLE_MAT3, /// dmat3
+    DoubleMat4 = GL_DOUBLE_MAT4, /// dmat4
+    DoubleMat2x3 = GL_DOUBLE_MAT2x3, /// dmat2x3
+    DoubleMat2x4 = GL_DOUBLE_MAT2x4, /// dmat2x4
+    DoubleMat3x2 = GL_DOUBLE_MAT3x2, /// dmat3x2
+    DoubleMat3x4 = GL_DOUBLE_MAT3x4, /// dmat3x4
+    DoubleMat4x2 = GL_DOUBLE_MAT4x2, /// dmat4x2
+    DoubleMat4x3 = GL_DOUBLE_MAT4x3, /// dmat4x3
+    Sampler1D = GL_SAMPLER_1D, /// sampler1D
+    Sampler2D = GL_SAMPLER_2D, /// sampler2D
+    Sampler3D = GL_SAMPLER_3D, /// sampler3D
+    SamplerCube = GL_SAMPLER_CUBE, /// samplerCube
+    Sampler1DShadow = GL_SAMPLER_1D_SHADOW, /// sampler1DShadow
+    Sampler2DShadow = GL_SAMPLER_2D_SHADOW, /// sampler2DShadow
+    Sampler1DArray = GL_SAMPLER_1D_ARRAY, /// sampler1DArray
+    Sampler2DArray = GL_SAMPLER_2D_ARRAY, /// sampler2DArray
+    Sampler1DArrayShadow = GL_SAMPLER_1D_ARRAY_SHADOW, /// sampler1DArrayShadow
+    Sampler2DArrayShadow = GL_SAMPLER_2D_ARRAY_SHADOW, /// sampler2DArrayShadow
+    Sampler2DMultisample = GL_SAMPLER_2D_MULTISAMPLE, /// sampler2DMS
+    Sampler2DMultisampleArray = GL_SAMPLER_2D_MULTISAMPLE_ARRAY, /// sampler2DMSArray
+    SamplerCubeShadow = GL_SAMPLER_CUBE_SHADOW, /// samplerCubeShadow
+    SamplerBuffer = GL_SAMPLER_BUFFER, /// samplerBuffer
+    Sampler2DRect = GL_SAMPLER_2D_RECT, /// sampler2DRect
+    Sampler2DRectShadow = GL_SAMPLER_2D_RECT_SHADOW, /// sampler2DRectShadow
+    IntSampler1D = GL_INT_SAMPLER_1D, /// isampler1D
+    IntSampler2D = GL_INT_SAMPLER_2D, /// isampler2D
+    IntSampler3D = GL_INT_SAMPLER_3D, /// isampler3D
+    IntSamplerCube = GL_INT_SAMPLER_CUBE, /// isamplerCube
+    IntSampler1DArray = GL_INT_SAMPLER_1D_ARRAY, /// isampler1DArray
+    IntSampler2DArray = GL_INT_SAMPLER_2D_ARRAY, /// isampler2DArray
+    IntSampler2DMultisample = GL_INT_SAMPLER_2D_MULTISAMPLE, /// isampler2DMS
+    IntSampler2DMultisampleArray = GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY, /// isampler2DMSArray
+    IntSamplerBuffer = GL_INT_SAMPLER_BUFFER, /// isamplerBuffer
+    IntSampler2DRect = GL_INT_SAMPLER_2D_RECT, /// isampler2DRect
+    UnsignedIntSampler1D = GL_UNSIGNED_INT_SAMPLER_1D, /// usampler1D
+    UnsignedIntSampler2D = GL_UNSIGNED_INT_SAMPLER_2D, /// usampler2D
+    UnsignedIntSampler3D = GL_UNSIGNED_INT_SAMPLER_3D, /// usampler3D
+    UnsignedIntSamplerCube = GL_UNSIGNED_INT_SAMPLER_CUBE, /// usamplerCube
+    UnsignedIntSampler1DArray = GL_UNSIGNED_INT_SAMPLER_1D_ARRAY, /// usampler2DArray
+    UnsignedIntSampler2DArray = GL_UNSIGNED_INT_SAMPLER_2D_ARRAY, /// usampler2DArray
+    UnsignedIntSampler2DMultisample = GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE, /// usampler2DMS
+    UnsignedIntSampler2DMultisampleArray = GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY, /// usampler2DMSArray
+    UnsignedIntSamplerBuffer = GL_UNSIGNED_INT_SAMPLER_BUFFER, /// usamplerBuffer
+    UnsignedIntSampler2DRect = GL_UNSIGNED_INT_SAMPLER_2D_RECT, /// usampler2DRect
+    Image1D = GL_IMAGE_1D, /// image1D
+    Image2D = GL_IMAGE_2D, /// image2D
+    Image3D = GL_IMAGE_3D, /// image3D
+    Image2DRect = GL_IMAGE_2D_RECT, /// image2DRect
+    ImageCube = GL_IMAGE_CUBE, /// imageCube
+    ImageBuffer = GL_IMAGE_BUFFER, /// imageBuffer
+    Image1DArray = GL_IMAGE_1D_ARRAY, /// image1DArray
+    Image2DArray = GL_IMAGE_2D_ARRAY, /// image2DArray
+    Image2DMultisample = GL_IMAGE_2D_MULTISAMPLE, /// image2DMS
+    Image2DMultisampleArray = GL_IMAGE_2D_MULTISAMPLE_ARRAY, /// image2DMSArray
+    IntImage1D = GL_INT_IMAGE_1D, /// iimage1D
+    IntImage2D = GL_INT_IMAGE_2D, /// iimage2D
+    IntImage3D = GL_INT_IMAGE_3D, /// iimage3D
+    IntImage2DRect = GL_INT_IMAGE_2D_RECT, /// iimage2DRect
+    IntImageCube = GL_INT_IMAGE_CUBE, /// iimageCube
+    IntImageBuffer = GL_INT_IMAGE_BUFFER, /// iimageBuffer
+    IntImage1DArray = GL_INT_IMAGE_1D_ARRAY, /// iimage1DArray
+    IntImage2DArray = GL_INT_IMAGE_2D_ARRAY, /// iimage2DArray
+    IntImage2DMultisample = GL_INT_IMAGE_2D_MULTISAMPLE, /// iimage2DMS
+    IntImage2DMultisampleArray = GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY, /// iimage2DMSArray
+    UnsignedIntImage1D = GL_UNSIGNED_INT_IMAGE_1D, /// uimage1D
+    UnsignedIntImage2D = GL_UNSIGNED_INT_IMAGE_2D, /// uimage2D
+    UnsignedIntImage3D = GL_UNSIGNED_INT_IMAGE_3D, /// uimage3D
+    UnsignedIntImage2DRect = GL_UNSIGNED_INT_IMAGE_2D_RECT, /// uimage2DRect
+    UnsignedIntImageCube = GL_UNSIGNED_INT_IMAGE_CUBE, /// uimageCube
+    UnsignedIntImageBuffer = GL_UNSIGNED_INT_IMAGE_BUFFER, /// uimageBuffer
+    UnsignedIntImage1DArray = GL_UNSIGNED_INT_IMAGE_1D_ARRAY, /// uimage1DArray
+    UnsignedIntImage2DArray = GL_UNSIGNED_INT_IMAGE_2D_ARRAY, /// uimage2DArray
+    UnsignedIntImage2DMultisample = GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE, /// uimage2DMS
+    UnsignedIntImage2DMultisampleArray = GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY, /// uimage2DMSArray
+    UnsignedIntAtomicCounter = GL_UNSIGNED_INT_ATOMIC_COUNTER, /// atomic_uint
+}
+
+/// https://www.khronos.org/opengl/wiki/GLAPI/glVertexAttribPointer
+enum GLVertexAttributePointerType : GLenum {
+    // glVertexAttribIPointer
+    GL_BYTE,
+    GL_UNSIGNED_BYTE,
+    GL_SHORT,
+    GL_UNSIGNED_SHORT,
+    GL_INT,
+    GL_UNSIGNED_INT,
+    // glVertexAttribPointer
+    GL_HALF_FLOAT,
+    GL_FLOAT,
+    GL_DOUBLE,
+    GL_FIXED,
+    GL_INT_2_10_10_10_REV,
+    GL_UNSIGNED_INT_2_10_10_10_REV,
+    GL_UNSIGNED_INT_10F_11F_11F_REV,
+}
+
+/// An enumeration of the different types of shaders.
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCreateShader.xhtml
+enum GLShaderType : GLenum {
+    Compute = GL_COMPUTE_SHADER,
+    Vertex = GL_VERTEX_SHADER,
+    TessControl = GL_TESS_CONTROL_SHADER,
+    TessEvaluation = GL_TESS_EVALUATION_SHADER,
+    Geometry = GL_GEOMETRY_SHADER,
+    Fragment = GL_FRAGMENT_SHADER,
+}
+
+/// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glGetShader.xhtml
+enum GLShaderParameter : GLenum {
+    Type = GL_SHADER_TYPE,
+    DeleteStatus = GL_DELETE_STATUS,
+    CompileStatus = GL_COMPILE_STATUS,
+    InfoLogLength = GL_INFO_LOG_LENGTH,
+    SourceLength = GL_SHADER_SOURCE_LENGTH,
+}
+
+/// https://www.khronos.org/opengl/wiki/GLAPI/glGetSamplerParameter
+/// https://www.khronos.org/opengl/wiki/GLAPI/glSamplerParameter
+static enum GLSamplerParameter : GLenum {
+    WrapS = GL_TEXTURE_WRAP_S, WrapX = WrapS,
+    WrapT = GL_TEXTURE_WRAP_T, WrapY = WrapT,
+    WrapR = GL_TEXTURE_WRAP_R, WrapZ = WrapR,
+    MinFilter = GL_TEXTURE_MIN_FILTER,
+    MagFilter = GL_TEXTURE_MAG_FILTER,
+    BorderColor = GL_TEXTURE_BORDER_COLOR,
+    MinLOD = GL_TEXTURE_MIN_LOD,
+    MaxLOD = GL_TEXTURE_MAX_LOD,
+    LODBias = GL_TEXTURE_LOD_BIAS,
+    // TODO: What do these do?
+    CompareMode = GL_TEXTURE_COMPARE_MODE,
+    CompareFunc = GL_TEXTURE_COMPARE_FUNC,
+}
+
+/// https://www.khronos.org/opengl/wiki/GLAPI/glSamplerParameter
+enum GLTextureCompareMode : GLenum {
+    Ref = GL_COMPARE_REF_TO_TEXTURE,
+    None = GL_NONE,
+}
+
+/// https://www.khronos.org/opengl/wiki/GLAPI/glSamplerParameter
+enum GLTextureCompareFunction : GLenum {
+    Less = GL_LESS,
+    Greater = GL_GREATER,
+    Equal = GL_EQUAL,
+    NotEqual = GL_NOTEQUAL,
+    LessOrEqual = GL_LEQUAL,
+    GreaterOrEqual = GL_GEQUAL,
+    Always = GL_ALWAYS,
+    Never = GL_NEVER,
+}

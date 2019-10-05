@@ -11,7 +11,7 @@ import mach.math.vector : Vector, Vector2;
 import mach.sdl.error : SDLException;
 import mach.sdl.init.sdl : SDL;
 import mach.sdl.graphics.color : Color;
-import mach.sdl.graphics.pixelformat : PixelFormat;
+import mach.sdl.graphics.pixelformat : SDLPixelFormat;
 import mach.sdl.graphics.mask : Mask;
 
 public:
@@ -49,7 +49,7 @@ private auto loadsurface(in string path){
 
 
 /// Wraps an SDL_Surface, which stores image data in RAM.
-struct Surface{
+struct SDLSurface {
     /// The underlying SDL_Surface
     SDL_Surface* surface;
     
@@ -69,7 +69,7 @@ struct Surface{
     }
     this(
         void* pixels, int width, int height,
-        ref PixelFormat format, int pitch = -1
+        ref SDLPixelFormat format, int pitch = -1
     ){
         this(pixels, width, height, format.bits, format.mask, pitch);
     }
@@ -92,7 +92,7 @@ struct Surface{
         this.enforcevalid();
     }
     this(
-        in int width, in int height, in ref PixelFormat format,
+        in int width, in int height, in ref SDLPixelFormat format,
         in uint flags = DEFAULT_CREATION_FLAGS
     ){
         this(width, height, format.bits, format.mask, flags);
@@ -165,24 +165,24 @@ struct Surface{
     }
     
     /// Convert this surface to the same format as another.
-    Surface convert(in Surface surface, in uint flags = 0){
+    SDLSurface convert(in SDLSurface surface, in uint flags = 0){
         return this.convert(surface.pixelformat, flags);
     }
     /// Return another surface which is the same as this surface, but in another format.
-    Surface convert(in PixelFormat format, uint flags = 0){
+    SDLSurface convert(in SDLPixelFormat format, uint flags = 0){
         return this.convert(format.pixelformat, flags);
     }
     /// ditto
-    Surface convert(in SDL_PixelFormat* format, uint flags = 0){
+    SDLSurface convert(in SDL_PixelFormat* format, uint flags = 0){
         SDL_Surface* result = SDL_ConvertSurface(this.surface, format, flags);
         if(!result) throw new SDLException("Failed to convert surface to new format.");
-        return Surface(result);
+        return SDLSurface(result);
     }
     /// ditto
-    Surface convert(in PixelFormat.Format format, uint flags = 0){
+    SDLSurface convert(in SDLPixelFormat.Format format, uint flags = 0){
         SDL_Surface* result = SDL_ConvertSurfaceFormat(this.surface, format, flags);
         if(!result) throw new SDLException("Failed to convert surface to new format.");
-        return Surface(result);
+        return SDLSurface(result);
     }
     
     /// Formats available for saving the surface as an image.
@@ -303,7 +303,7 @@ struct Surface{
         return this.surface.format.BytesPerPixel;
     }
     @property auto pixelformat() const @trusted in{this.enforceexists();} body{
-        return PixelFormat(this.surface.format);
+        return SDLPixelFormat(this.surface.format);
     }
     @property auto pixelformatmask() const @trusted in{this.enforceexists();} body{
         return Mask(this.surface.format);
@@ -313,14 +313,14 @@ struct Surface{
     }
     
     /// Blit pixel data from another surface onto this one.
-    void blit(Surface source){
+    void blit(SDLSurface source){
         immutable Box!int box = Box!int(source.size);
         this.blit(source, box, box);
     }
-    void blit(Surface source, in Box!int from){
+    void blit(SDLSurface source, in Box!int from){
         this.blit(source, from, Box!int(from.size));
     }
-    void blit(Surface source, in Box!int from, in Box!int to) in{
+    void blit(SDLSurface source, in Box!int from, in Box!int to) in{
         this.enforcevalid();
         source.enforcevalid();
     }body{
@@ -335,12 +335,12 @@ struct Surface{
     }
     
     /// Make a copy of this surface.
-    Surface copy(){
+    SDLSurface copy(){
         return this.sub(Box!int(this.size));
     }
     /// Get a rectangular portion of this surface as another surface.
-    Surface sub(in Box!int box) in{this.enforcevalid();} body{
-        Surface sub = Surface(box.width, box.height, this.surface.format);
+    SDLSurface sub(in Box!int box) in{this.enforcevalid();} body{
+        SDLSurface sub = SDLSurface(box.width, box.height, this.surface.format);
         SDL_Rect rect = box.toSDLrect();
         if(SDL_BlitSurface(this.surface, &rect, sub.surface, null) != 0){
             throw new SDLException("Failed to blit surface.");
@@ -411,7 +411,7 @@ struct Surface{
         this.putpixelvalue(x, y, color.format(this.surface.format));
     }
     
-    Surface opIndex(T)(in Box!T box){
+    SDLSurface opIndex(T)(in Box!T box){
         return this.sub(cast(Box!int) box);
     }
     Color opIndex(in int x, in int y){
@@ -451,7 +451,7 @@ unittest{
     /+
     DerelictSDL2.load(); // Not necessary to fully initialize SDL for this test
     
-    Surface surface = Surface(10, 10);
+    SDLSurface surface = SDLSurface(10, 10);
     surface.fill(Color(1, 0, 0));
     foreach(x; 0 .. surface.width){
         foreach(y; 0 .. surface.height){

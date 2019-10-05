@@ -3,7 +3,7 @@ module mach.sdl.input.keyboard;
 private:
 
 import derelict.sdl2.sdl;
-import mach.sdl.window : Window;
+import mach.sdl.window : SDLWindow;
 import mach.sdl.input.keycode;
 
 public:
@@ -13,8 +13,8 @@ public:
 struct Keyboard{
     /// Get the window which currently has keyboard focus.
     /// https://wiki.libsdl.org/SDL_GetKeyboardFocus
-    Window focus(){
-        return Window.byptr(SDL_GetKeyboardFocus());
+    SDLWindow focus(){
+        return SDLWindow.byptr(SDL_GetKeyboardFocus());
     }
     
     /// Determine whether the device supports an on-screen keyboard.
@@ -24,7 +24,7 @@ struct Keyboard{
     }
     /// Determine whether the device's on-screen keyboard is currently shown.
     /// https://wiki.libsdl.org/SDL_IsScreenKeyboardShown
-    bool screenshown(Window window){
+    bool screenshown(SDLWindow window){
         return cast(bool) SDL_IsScreenKeyboardShown(window.window);
     }
 

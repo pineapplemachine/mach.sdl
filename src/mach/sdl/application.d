@@ -6,7 +6,7 @@ import mach.traits : isNumeric;
 import mach.math : vector;
 import mach.error : ThrowableMixin;
 import mach.sdl.init : SDL, GL;
-import mach.sdl.window : Window;
+import mach.sdl.window : SDLWindow;
 import mach.sdl.graphics : Color;
 import mach.sdl.framelimiter : FrameLimiter;
 import mach.sdl.input.event : Event, EventQueue;
@@ -43,7 +43,7 @@ abstract class Application{
     }
     
     /// The application's primary window. (TODO: Support for multiple windows?)
-    Window window = null;
+    SDLWindow window = null;
     /// Indicates what SDL libraries should be loaded and initialized.
     SDL.Support sdlsupport = SDL.Support.Default;
     /// The application's frame limiter.
@@ -105,7 +105,7 @@ abstract class Application{
     }
     
     /// Called once when the application is initialized.
-    /// Must at least set this.window to a Window instance.
+    /// Must at least set this.window to a SDLWindow instance.
     /// This is a good place to load images, sounds, and other resources.
     abstract void initialize();
     /// Called once as the application is terminated.
@@ -190,9 +190,14 @@ abstract class Application{
     /// Entry point for the application.
     /// Returns the reason for having quit.
     auto begin(){
-        this.metainitialize();
-        while(!this.quitting) this.metamain();
-        this.metaconclude();
+        try {
+            this.metainitialize();
+            while(!this.quitting) this.metamain();
+            this.metaconclude();
+        }
+        catch(Throwable error) {
+            this.onerror(error);
+        }
         return this.quitreason;
     }
     
@@ -240,7 +245,8 @@ abstract class Application{
                 }
                 this.framelimiter.update();
             }
-        }catch(Throwable error){
+        }
+        catch(Throwable error){
             this.onerror(error);
         }
     }

@@ -7,7 +7,7 @@ import derelict.sdl2.sdl;
 import mach.traits : isNumeric;
 import mach.math : isVector2;
 import mach.sdl.error : SDLException;
-import mach.sdl.graphics.surface : Surface;
+import mach.sdl.graphics.surface : SDLSurface;
 
 public:
 
@@ -58,10 +58,10 @@ struct MouseCursor{
         this.cursor = SDL_CreateColorCursor(surface, x, y);
         if(this.cursor is null) throw new SDLException("Failed to create cursor.");
     }
-    this(T)(Surface surface, T vector) if(isVector2!T){
+    this(T)(SDLSurface surface, T vector) if(isVector2!T){
         this(surface, vector.x, vector.y);
     }
-    this(T)(Surface surface, T x = 0, T y = 0) if(isNumeric!T){
+    this(T)(SDLSurface surface, T x = 0, T y = 0) if(isNumeric!T){
         this(surface.surface, cast(int) x, cast(int) y);
     }
     

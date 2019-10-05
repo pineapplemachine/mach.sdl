@@ -11,11 +11,11 @@ import mach.text.cstring : tocstring, fromcstring;
 
 import mach.sdl.error : SDLException, GLException;
 import mach.sdl.init : GL, GLSettings;
-import mach.sdl.glenum : PixelsFormat, PixelsType, ColorBufferMode;
+import mach.sdl.glenum : GLPixelsFormat, GLPixelsType, GLColorBufferMode;
 import mach.sdl.graphics.color : Color;
 import mach.sdl.graphics.mask : Mask;
-import mach.sdl.graphics.displaymode : DisplayMode;
-import mach.sdl.graphics.surface : Surface;
+import mach.sdl.graphics.displaymode : SDLDisplayMode;
+import mach.sdl.graphics.surface : SDLSurface;
 import mach.math.box : Box;
 import mach.math.vector : Vector, Vector2;
 import mach.math.matrix : Matrix4;
@@ -26,7 +26,7 @@ public:
 
 
 
-class Window{
+class SDLWindow {
     static enum string DefaultTitle = "D Application";
     
     alias ID = uint;
@@ -74,7 +74,7 @@ class Window{
     static typeof(this.window) currentwindow = null; // Currently active window
     
     // Please don't hate me
-    static Window[] instances;
+    static SDLWindow[] instances;
     void register() in{
         // Disallow duplicates in registry
         foreach(instance; instances) assert(this !is instance);
@@ -83,7 +83,7 @@ class Window{
     }
     void unregister(){
         if(this.window !is null){
-            Window[] newinstances;
+            SDLWindow[] newinstances;
             newinstances.reserve(this.instances.length - 1);
             foreach(instance; instances){
                 if(instance !is this) newinstances ~= instances;
@@ -111,7 +111,9 @@ class Window{
     SDL_GLContext context;
     
     private static auto centeredbox(in int width, in int height){
-        immutable position = (DisplayMode.desktop.size - Vector2!int(width, height)) / 2;
+        immutable position = (
+            (SDLDisplayMode.desktop.size - Vector2!int(width, height)) / 2
+        );
         return Box!int(width, height) + position;
     }
     
@@ -121,7 +123,7 @@ class Window{
         in VSync vsync = VSync.Disabled,
         in GLSettings settings = GLSettings.Default
     ){
-        this(DefaultTitle, width, height, style, vsync);
+        this(DefaultTitle, width, height, style, vsync, settings);
     }
     this(
         in string title, in int width, in int height,
@@ -129,7 +131,7 @@ class Window{
         in VSync vsync = VSync.Disabled,
         in GLSettings settings = GLSettings.Default
     ){
-        this(title, this.centeredbox(width, height), style, vsync);
+        this(title, this.centeredbox(width, height), style, vsync, settings);
     }
     this(
         in string title, in Vector2!int size,
@@ -137,7 +139,7 @@ class Window{
         in VSync vsync = VSync.Disabled,
         in GLSettings settings = GLSettings.Default
     ){
-        this(title, size.x, size.y, style, vsync);
+        this(title, size.x, size.y, style, vsync, settings);
     }
     this(
         in string title, in Box!int view,
@@ -297,7 +299,7 @@ class Window{
         SDL_SetWindowTitle(this.window, title.tocstring);
     }
     
-    @property void icon(Surface icon){
+    @property void icon(SDLSurface icon){
         this.icon(icon.surface);
     }
     @property void icon(SDL_Surface* icon){
@@ -310,21 +312,21 @@ class Window{
         if(!surface) throw new SDLException("Failed to get window surface.");
         return surface;
     }
-    @property Surface surface(){
-        return Surface(this.sdlsurface());
+    @property SDLSurface surface(){
+        return SDLSurface(this.sdlsurface());
     }
     
     /// Get window graphics data as a surface
-    Surface capture(
-        in PixelsFormat format = PixelsFormat.BGRA,
-        in int depth = Surface.DEFAULT_DEPTH
+    SDLSurface capture(
+        in GLPixelsFormat format = GLPixelsFormat.BGRA,
+        in int depth = SDLSurface.DEFAULT_DEPTH
     ){
         Vector2!int size = this.size();
-        Surface capture = Surface(size.x, size.y, depth, Mask.Zero);
-        glReadBuffer(ColorBufferMode.Front);
+        SDLSurface capture = SDLSurface(size.x, size.y, depth, Mask.Zero);
+        glReadBuffer(GLColorBufferMode.Front);
         glReadPixels(
             0, 0, size.x, size.y, format,
-            PixelsType.Ubyte, capture.surface.pixels
+            GLPixelsType.Ubyte, capture.surface.pixels
         );
         GLException.enforce();
         //capture.flip(); // TODO: Why does Dgame do a horizontal flip here?
@@ -437,7 +439,7 @@ class Window{
         return SDL_GetWindowDisplayIndex(this.window);
     }
     
-    @property void displaymode(in DisplayMode mode){
+    @property void displaymode(in SDLDisplayMode mode){
         this.displaymode(cast(SDL_DisplayMode) mode);
     }
     @property void displaymode(in SDL_DisplayMode mode){
@@ -445,10 +447,10 @@ class Window{
             throw new SDLException("Failed to set display mode.");
         }
     }
-    @property DisplayMode displaymode(){
-        return DisplayMode(this.SDLdisplaymode);
+    @property SDLDisplayMode displaymode(){
+        return SDLDisplayMode(this.getSDLdisplaymode);
     }
-    SDL_DisplayMode SDLdisplaymode(){
+    SDL_DisplayMode getSDLdisplaymode() {
         SDL_DisplayMode mode;
         if(!SDL_GetWindowDisplayMode(this.window, &mode)){
             throw new SDLException("Failed to get display mode.");

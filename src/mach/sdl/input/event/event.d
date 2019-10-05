@@ -9,7 +9,7 @@ import std.experimental.allocator.gc_allocator : GCAllocator;
 
 import mach.math : vector;
 import mach.sdl.error : SDLException;
-import mach.sdl.window : Window;
+import mach.sdl.window : SDLWindow;
 import mach.sdl.input.joystick : Joystick;
 import mach.sdl.input.controller : Controller;
 import mach.sdl.input.common;
@@ -204,7 +204,7 @@ struct Event{
     /// Get the window that is associated with this event, if any.
     /// Throws an error if this event type doesn't include the information.
     @property auto window(){
-        return .Window.byid(this.windowid);
+        return SDLWindow.byid(this.windowid);
     }
     @property auto windowid() const{
         switch(this.type){

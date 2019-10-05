@@ -52,21 +52,21 @@ template EventMixin(T, string attribute){
 
 /// For events including the focused window.
 template WindowEventMixin(){
-    import mach.sdl.window : Window;
+    import mach.sdl.window : SDLWindow;
     /// Get the ID of the window for which this event was generated.
-    @property Window.ID windowid() const{
-        return cast(Window.ID) this.eventdata.windowID;
+    @property SDLWindow.ID windowid() const{
+        return cast(SDLWindow.ID) this.eventdata.windowID;
     }
     /// Set the ID of the window for which this event was generated.
-    @property void windowid(Window.ID windowid){
+    @property void windowid(SDLWindow.ID windowid){
         this.eventdata.windowID = windowid;
     }
     /// Get the window object for which this event was generated.
-    @property Window window(){
-        return Window.byid(this.windowid);
+    @property SDLWindow window(){
+        return SDLWindow.byid(this.windowid);
     }
     /// Set the window for which this event was generated.
-    @property void window(Window window){
+    @property void window(SDLWindow window){
         this.windowid = window.id;
     }
 }

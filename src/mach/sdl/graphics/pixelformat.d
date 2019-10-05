@@ -3,15 +3,15 @@ module mach.sdl.graphics.pixelformat;
 private:
     
 import derelict.sdl2.sdl;
-import mach.sdl.glenum : GLPixelsFormat = PixelsFormat;
+import mach.sdl.glenum : GLPixelsFormat = GLPixelsFormat;
 import mach.sdl.graphics.mask : Mask;
 
 public:
 
 // Reference: https://wiki.libsdl.org/SDL_PixelFormat
 
-struct PixelFormat{ // Corresponds to SDL_PixelFormat
-    static enum Format{ // Corresponds to SDL_PixelFormatEnum
+struct SDLPixelFormat { // Corresponds to SDL_PixelFormat
+    static enum Format { // Corresponds to SDL_PixelFormatEnum
         Unknown = SDL_PIXELFORMAT_UNKNOWN,
         Index1LSB = SDL_PIXELFORMAT_INDEX1LSB,
         Index1MSB = SDL_PIXELFORMAT_INDEX1MSB,
@@ -79,12 +79,13 @@ struct PixelFormat{ // Corresponds to SDL_PixelFormat
         return this.pixelformat;
     }
     
-    /// Good to go or a surface must be converted before it can become a texture?
+    /// Good to go or a surface must be converted
+    /// before it can become a texture?
     @property bool glcompatible(){
         return(
-            (this.format == Format.ABGR8888) ||
+            (this.format is Format.ABGR8888) ||
             //(this.format == Format.RGBA8888) || // Bad?
-            (this.format == Format.ARGB8888)
+            (this.format is Format.ARGB8888)
         );
     }
 }

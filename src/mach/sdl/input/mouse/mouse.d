@@ -7,7 +7,7 @@ import derelict.sdl2.sdl;
 import mach.traits : isNumeric;
 import mach.math : isVector2;
 import mach.sdl.error : SDLException;
-import mach.sdl.window : Window;
+import mach.sdl.window : SDLWindow;
 import mach.sdl.input.mouse.common;
 import mach.sdl.input.mouse.cursor;
 import mach.sdl.input.mouse.state;
@@ -34,11 +34,11 @@ struct Mouse{
         typeof(this).warpglobal(vector.x, vector.y);
     }
     /// https://wiki.libsdl.org/SDL_WarpMouseInWindow
-    static void warpwindow(T)(Window window, T x, T y) if(isNumeric!T){
+    static void warpwindow(T)(SDLWindow window, T x, T y) if(isNumeric!T){
         typeof(this).warpwindow(window.window, x, y);
     }
     /// ditto
-    static void warpwindow(T)(Window window, T vector) if(isVector2!T){
+    static void warpwindow(T)(SDLWindow window, T vector) if(isVector2!T){
         typeof(this).warpwindow(window.window, vector.x, vector.y);
     }
     /// ditto

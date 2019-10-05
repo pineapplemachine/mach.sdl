@@ -5,13 +5,15 @@ private:
 import derelict.sdl2.sdl;
 import mach.sdl.error : SDLException;
 import mach.math : Vector2, Box;
+import mach.text.numeric.integrals : writeint;
 
 public:
 
-static struct DisplayMode{
-    version(BigEndian){
+static struct SDLDisplayMode {
+    version(BigEndian) {
         static enum DEFAULT_FORMAT = SDL_PIXELFORMAT_RGBA8888;
-    }else{
+    }
+    else{
         static enum DEFAULT_FORMAT = SDL_PIXELFORMAT_ABGR8888;
     }
     
@@ -40,12 +42,12 @@ static struct DisplayMode{
         return Vector2!int(this.width, this.height);
     }
     
-    static DisplayMode desktop(in ubyte display = 0){
+    static SDLDisplayMode desktop(in ubyte display = 0){
         SDL_DisplayMode mode;
         if(SDL_GetDesktopDisplayMode(display, &mode) != 0){
             throw new SDLException("Failed to retrieve desktop display mode.");
         }
-        return DisplayMode(mode);
+        return SDLDisplayMode(mode);
     }
     
     SDL_DisplayMode opCast(T: SDL_DisplayMode)() const{
@@ -53,9 +55,10 @@ static struct DisplayMode{
     }
     
     string toString() const{
-        import std.format : format;
-        return "DisplayMode: Dimensions: (%d, %d), Refresh: %dhz, Format: %d".format(
-            this.width, this.height, this.refreshrate, this.format
+        return (
+            "Dimensions: " ~ writeint(this.width) ~ "x" ~ writeint(this.height) ~ ", " ~
+            "Refresh rate: " ~ writeint(this.refreshrate) ~ "hz, " ~
+            "Format: " ~ writeint(this.format)
         );
     }
 }
