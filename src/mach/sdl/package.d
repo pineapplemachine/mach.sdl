@@ -7,6 +7,7 @@ import mach.sdl.audio;
 import mach.sdl.error;
 import mach.sdl.framelimiter;
 import mach.sdl.glenum;
+import mach.sdl.gldebug;
 import mach.sdl.graphics;
 import mach.sdl.haptic;
 import mach.sdl.input;
