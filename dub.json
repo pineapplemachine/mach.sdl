@@ -20,7 +20,8 @@
     ],
     "dependencies": {
         "mach": {"path": "../../mach.d/"},
-        "derelict-gl3": {"path": "../derelict/DerelictGL3-2.0.0-beta.8"},
-        "derelict-sdl2": {"path": "../derelict/DerelictSDL2-3.0.0-beta.8"}
+        "derelict-gl3": "2.0.0-beta.8",
+        "derelict-sdl2": "3.0.0-beta.8",
+        "derelict-util": "3.0.0-beta.2"
     },
 }
